@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "Node.js REST API for importing Excel product data and managing categories, subcategories, warranties, and filters in MongoDB.",
   "main": "main.js",
-  "scripts": {},
+  "scripts": {
+    "start": "node src/main.js",
+    "dev": "nodemon src/main.js"
+  },
   "keywords": [
     "nodejs",
     "express",
