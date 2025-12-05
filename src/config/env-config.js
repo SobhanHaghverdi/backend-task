@@ -9,6 +9,7 @@ const cleanedEnv = Object.fromEntries(
 async function validateEnv() {
   const schema = vine.object({
     CORS_ORIGIN: vine.string(),
+    MONGODB_URI: vine.string(),
     NODE_ENV: vine.enum(Object.values(NodeEnv)),
     PORT: vine
       .number()
