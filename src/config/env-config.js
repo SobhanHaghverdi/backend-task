@@ -1,4 +1,5 @@
 import vine from "@vinejs/vine";
+import NodeEnv from "../common/constant/node-env-enum.js";
 
 //* Convert empty strings to undefined to allow optional variables to be properly parsed
 const cleanedEnv = Object.fromEntries(
@@ -8,6 +9,7 @@ const cleanedEnv = Object.fromEntries(
 async function validateEnv() {
   const schema = vine.object({
     CORS_ORIGIN: vine.string(),
+    NODE_ENV: vine.enum(Object.values(NodeEnv)),
     PORT: vine
       .number()
       .withoutDecimals()
