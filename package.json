@@ -1,0 +1,52 @@
+{
+  "name": "backend-task",
+  "version": "1.0.0",
+  "description": "Node.js REST API for importing Excel product data and managing categories, subcategories, warranties, and filters in MongoDB.",
+  "main": "main.js",
+  "scripts": {},
+  "keywords": [
+    "nodejs",
+    "express",
+    "mongodb",
+    "mongoose",
+    "rest-api",
+    "excel-import",
+    "product-management",
+    "search-api",
+    "pagination",
+    "sorting",
+    "aggregation-pipeline",
+    "file-upload",
+    "multer",
+    "api-project",
+    "node-backend",
+    "express-api",
+    "mongo-aggregation",
+    "dataset-import",
+    "ecommerce-backend"
+  ],
+  "author": "Sobhan Haghverdi",
+  "packageManager": "pnpm@10.22.0",
+  "type": "module",
+  "bugs": {
+    "email": "sobhanhv.dev@gmail.com"
+  },
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/SobhanHaghverdi/backend-task"
+  },
+  "dependencies": {
+    "@vinejs/vine": "^4.1.0",
+    "cors": "^2.8.5",
+    "exceljs": "^4.4.0",
+    "express": "^5.2.1",
+    "express-async-errors": "^3.1.1",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^8.2.1",
+    "helmet": "^8.1.0",
+    "mongoose": "^9.0.0",
+    "multer": "^2.0.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  }
+}
