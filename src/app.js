@@ -1,7 +1,8 @@
 import express from "express";
 import registerConfigs from "./config/index.js";
 import configureMongoose from "./config/mongoose-config.js";
-// import "express-async-errors";
+import globalErrorHandler from "./common/middlewares/global-error-handler.js";
+import notFoundErrorHandler from "./common/middlewares/not-found-error-handler.js";
 
 async function buildApp() {
   const app = express();
@@ -10,6 +11,10 @@ async function buildApp() {
   registerConfigs(app);
 
   await configureMongoose();
+
+  //* Error handlers
+  app.use(notFoundErrorHandler);
+  app.use(globalErrorHandler);
 
   return app;
 }
