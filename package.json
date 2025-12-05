@@ -4,8 +4,8 @@
   "description": "Node.js REST API for importing Excel product data and managing categories, subcategories, warranties, and filters in MongoDB.",
   "main": "main.js",
   "scripts": {
-    "start": "node src/main.js",
-    "dev": "nodemon src/main.js"
+    "start": "node --env-file=env/.env.production src/main.js",
+    "dev": "nodemon --env-file=env/.env.development src/main.js"
   },
   "keywords": [
     "nodejs",
@@ -44,7 +44,6 @@
     "exceljs": "^4.4.0",
     "express": "^5.2.1",
     "express-async-errors": "^3.1.1",
-    "express-mongo-sanitize": "^2.2.0",
     "express-rate-limit": "^8.2.1",
     "helmet": "^8.1.0",
     "mongoose": "^9.0.0",

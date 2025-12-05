@@ -1,8 +1,8 @@
 import os from "os";
 import cluster from "cluster";
 import buildApp from "./app.js";
+import env from "./config/env-config.js";
 
-const PORT = process.env.PORT || 3000;
 const numCPUs = os.cpus().length;
 
 if (cluster.isPrimary) {
@@ -51,7 +51,7 @@ async function startWorker() {
   process.on("SIGINT", shutdownWorker);
   process.on("SIGTERM", shutdownWorker);
 
-  server = app.listen(PORT, () => {
-    console.log(`🚀 Worker ${process.pid} started on port ${PORT}`);
+  server = app.listen(env.PORT, () => {
+    console.log(`🚀 Worker ${process.pid} started on port ${env.PORT}`);
   });
 }
