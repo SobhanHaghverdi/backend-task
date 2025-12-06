@@ -2,20 +2,24 @@ import path from "path";
 import multer from "multer";
 
 function fileFilter(req, file, cb) {
-  if (
-    path.extname(file.originalName) !== ".xlsx" &&
-    file.mimetype !==
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-  ) {
-    cb(null, false);
-  } else {
-    cb(null, true);
+  const ext = path.extname(file.originalname).toLowerCase();
+
+  const allowedMime =
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+  if (ext !== ".xlsx" || file.mimetype !== allowedMime) {
+    return cb(new Error("Only .xlsx files are allowed"));
   }
+
+  return cb(null, true);
 }
 
+// Use memory storage so the file is available as `req.file.buffer`.
+const storage = multer.memoryStorage();
+
 const uploader = multer({
+  storage,
   fileFilter,
-  dest: "/reports",
   limits: { fileSize: 10 * 1024 * 1024 }, //* 10 MB
 });
 

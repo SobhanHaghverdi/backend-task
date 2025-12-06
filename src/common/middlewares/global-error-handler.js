@@ -8,7 +8,7 @@ function globalErrorHandler(error, req, res, next) {
   }
 
   const data = { body: req.body, query: req.query };
-  const status = error?.status || error?.statusCode || error?.code || 500;
+  const status = error?.status || 500;
 
   res.error = {
     message,
