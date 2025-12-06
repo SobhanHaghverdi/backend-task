@@ -3,6 +3,8 @@ import moment from "moment-jalaali";
 import Product from "./product-model.js";
 import CategoryService from "../category/category-service.js";
 import { success } from "../../common/utils/service-response.js";
+import ObjectIdHelper from "../../common/utils/object-id-helper.js";
+import BooleanReplace from "../../common/constant/boolean-replace.js";
 
 class ProductService {
   #model;
@@ -14,9 +16,170 @@ class ProductService {
   }
 
   async filter(query) {
+    const {
+      pageNumber = 1,
+      search = undefined,
+      sort = "-createdAt",
+      isActive = undefined,
+      minPrice = undefined,
+      maxPrice = undefined,
+      minAmper = undefined,
+      maxAmper = undefined,
+      categoryIds = undefined,
+      warrantyActive = undefined,
+      subCategoryIds = undefined,
+      warrantyStartDateFrom = undefined,
+      warrantyStartDateTo = undefined,
+      warrantyEndDateFrom = undefined,
+      warrantyEndDateTo = undefined,
+    } = query;
+
+    const pageSize = parseInt(query.pageSize) || 20;
+
+    const [field, direction] = sort.startsWith("-")
+      ? [sort.slice(1), -1]
+      : [sort, 1];
+
+    const relationalCondition = {};
+    const mainCondition = {};
+
+    if (search) {
+      const searchRegex = new RegExp(`${search}`);
+
+      relationalCondition.$or = [
+        { name: { $regex: searchRegex } },
+        { code: { $regex: searchRegex } },
+        { "category.name": { $regex: searchRegex } },
+        { "category.parent.name": { $regex: searchRegex } },
+      ];
+    }
+
+    //* Filter by main categories
+    if (categoryIds?.length) {
+      let fixedCategoryIds = categoryIds.split(",");
+
+      fixedCategoryIds = fixedCategoryIds?.map((id) =>
+        ObjectIdHelper.convert(id)
+      );
+
+      const expression = [
+        { "category._id": { $in: fixedCategoryIds } },
+        { "category.parent._id": { $in: fixedCategoryIds } },
+      ];
+
+      if (relationalCondition.$or) relationalCondition.$or.push(...expression);
+      else relationalCondition.$or = expression;
+    }
+
+    //* Filter by sub categories
+    if (subCategoryIds?.length) {
+      let fixedSubCategoryIds = subCategoryIds.split(",");
+
+      fixedSubCategoryIds = fixedSubCategoryIds?.map((id) =>
+        ObjectIdHelper.convert(id)
+      );
+
+      mainCondition.category = { $in: fixedSubCategoryIds };
+    }
+
+    if (isActive !== undefined) {
+      mainCondition.isActive = BooleanReplace[isActive];
+    }
+
+    if (warrantyActive !== undefined) {
+      const operator = BooleanReplace[warrantyActive] ? "$gt" : "$lte";
+      mainCondition.warrantyEndDate = { [operator]: new Date() };
+    }
+
+    //* Filter by price
+    if (minPrice || maxPrice) {
+      mainCondition.price = {};
+
+      if (minPrice) mainCondition.price.$gte = parseInt(minPrice);
+      if (maxPrice) mainCondition.price.$lte = parseInt(maxPrice);
+    }
+
+    //* Filter by amper
+    if (minAmper || maxAmper) {
+      mainCondition.amp = {};
+
+      if (minAmper) mainCondition.amp.$gte = parseInt(minAmper);
+      if (maxAmper) mainCondition.amp.$lte = parseInt(maxAmper);
+    }
+
+    //* Filter by warranty start date
+    if (warrantyStartDateFrom || warrantyStartDateTo) {
+      mainCondition.warrantyStartDate = {};
+
+      if (warrantyStartDateFrom) {
+        mainCondition.warrantyStartDate.$gte = new Date(warrantyStartDateFrom);
+      }
+
+      if (warrantyStartDateTo) {
+        mainCondition.warrantyStartDate.$lte = new Date(warrantyStartDateTo);
+      }
+    }
+
+    //* Filter by warranty end date
+    if (warrantyEndDateFrom || warrantyEndDateTo) {
+      mainCondition.warrantyEndDate = {};
+
+      if (warrantyEndDateFrom) {
+        mainCondition.warrantyEndDate.$gte = new Date(warrantyEndDateFrom);
+      }
+
+      if (warrantyEndDateTo) {
+        mainCondition.warrantyEndDate.$lte = new Date(warrantyEndDateTo);
+      }
+    }
+
+    const [result] = await this.#model.aggregate([
+      { $match: mainCondition },
+      {
+        $lookup: {
+          localField: "category",
+          foreignField: "_id",
+          from: "categories",
+          as: "category",
+        },
+      },
+      { $unwind: { path: "$category", preserveNullAndEmptyArrays: true } },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category.parent",
+          foreignField: "_id",
+          as: "category.parent",
+        },
+      },
+      {
+        $unwind: {
+          path: "$category.parent",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      { $match: relationalCondition },
+      {
+        $facet: {
+          metadata: [{ $count: "total" }],
+          data: [
+            { $sort: { [field]: direction } },
+            { $skip: (pageNumber - 1) * pageSize },
+            { $limit: pageSize },
+            {
+              $project: {
+                description: 0,
+              },
+            },
+          ],
+        },
+      },
+      { $project: { data: 1, metadata: 1 } },
+    ]);
+
     return {
-      total: 0,
-      data: [],
+      total: result?.metadata?.[0]?.total || 0,
+      data: result?.data || [],
     };
   }
 
