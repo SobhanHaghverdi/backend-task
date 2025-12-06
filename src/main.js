@@ -33,7 +33,7 @@ if (cluster.isPrimary) {
   process.on("SIGINT", shutdownMaster);
   process.on("SIGTERM", shutdownMaster);
 } else {
-  startWorker();
+  await startWorker();
 }
 
 async function startWorker() {

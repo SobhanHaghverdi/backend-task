@@ -152,6 +152,10 @@ backend-task/
 PORT = 3000
 CORS_ORIGIN = "*"
 NODE_ENV = "development"
+MONGODB_MIN_POOL_SIZE = 5
+MONGODB_MAX_POOL_SIZE = 30
+MULTER_MAX_FILE_SIZE = 10485760
+MONGODB_READ_PREFERENCE = "primaryPreferred"
 MONGODB_URI = mongodb://localhost:27017/products
 
 ```

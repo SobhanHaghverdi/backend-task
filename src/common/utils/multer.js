@@ -1,5 +1,6 @@
 import path from "path";
 import multer from "multer";
+import env from "../../config/env-config.js";
 
 function fileFilter(req, file, cb) {
   const ext = path.extname(file.originalname).toLowerCase();
@@ -20,7 +21,7 @@ const storage = multer.memoryStorage();
 const uploader = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 10 * 1024 * 1024 }, //* 10 MB
+  limits: { fileSize: env.MULTER_MAX_FILE_SIZE },
 });
 
 export default uploader;
