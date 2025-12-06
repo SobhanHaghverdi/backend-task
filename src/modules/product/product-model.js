@@ -11,16 +11,15 @@ const createProductSchema = () => {
       warrantyEndDate: { type: Date, required: true },
       warrantyStartDate: { type: Date, required: true },
       name: { type: String, required: true, trim: true },
-      // parent: { ref: "Category", type: mongoose.Types.ObjectId },
       code: { type: String, required: true, unique: true, trim: true },
-      // category: {
-      //   index: true,
-      //   required: true,
-      //   ref: "Category",
-      //   type: mongoose.Types.ObjectId,
-      // },
+      category: {
+        index: true,
+        required: true,
+        ref: "Category",
+        type: mongoose.Types.ObjectId,
+      },
     },
-    { strict: true, versionKey: false, timestamps: true }
+    { strict: true, versionKey: false, timestamps: { updatedAt: false } }
   );
 
   //* Validations
