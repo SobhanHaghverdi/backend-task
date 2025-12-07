@@ -197,39 +197,68 @@ class ProductService {
     const categoryDtos = [];
     const subCategoryDtos = [];
 
+    let columnMap = {};
+
+    const REQUIRED_HEADERS = {
+      amp: ["amp", "amper", "آمپر"],
+      name: ["product name", "name", "نام"],
+      code: ["code", "product code", "شناسه کالا"],
+      isActive: ["is Active", "active", "status", "وضعیت"],
+      category: ["category", "category name", "دسته اصلی"],
+      subCategory: ["sub category", "sub category name", "زیردسته"],
+      warrantyDurationInMonth: ["warranty months", "مدت گارانتی (ماه)"],
+      price: ["price", "قیمت"],
+      warrantyStartDate: [
+        "warranty_start",
+        "warranty start date",
+        "شروع گارانتی",
+      ],
+    };
+
     //* Prepare data for inserting
     worksheet.eachRow((row, rowNumber) => {
-      if (rowNumber === 1) return; //* skip header
-      const values = row.values.slice(4);
+      //* Map and index headers values
+      if (rowNumber === 1) {
+        const headerValues = row.values.map((v) =>
+          String(v).toLowerCase().trim()
+        );
 
-      const [
-        name, // 0
-        isActiveValue, // 1
-        amp, // 2
-        categoryName, // 3
-        subCategoryName, // 4
-        price, // 5
-        startDate, // 6
-        months, // 7
-        code, // 8
-      ] = values;
+        for (const [key, aliases] of Object.entries(REQUIRED_HEADERS)) {
+          const index = headerValues.findIndex((h) =>
+            aliases.some((a) => a.toLowerCase() === h)
+          );
 
-      const start = moment(startDate, "jYYYY-jMM-jDDTHH:mm:ss.SSS").utc();
-      const warrantyStartDate = start.toDate();
-      const warrantyEndDate = start.clone().add(months, "months").toDate();
+          if (index === -1) throw new Error(`Missing required column: ${key}`);
+          columnMap[key] = index;
+        }
+
+        return;
+      }
+
+      const values = row.values;
+
+      const start = moment(
+        values[columnMap.warrantyStartDate],
+        "jYYYY-jMM-jDDTHH:mm:ss.SSS"
+      ).utc();
+
+      const warrantyEndDate = start
+        .clone()
+        .add(values[columnMap.warrantyDurationInMonth], "months")
+        .toDate();
 
       const dto = {
-        amp,
-        code,
-        name,
-        price,
         warrantyEndDate,
-        warrantyStartDate,
-        isActive: isActiveValue === "فعال",
+        amp: values[columnMap.amp],
+        code: values[columnMap.code],
+        name: values[columnMap.name],
+        price: values[columnMap.price],
+        warrantyStartDate: start.toDate(),
+        isActive: values[columnMap.isActive] === "فعال",
       };
 
-      const category = categoryName?.trim();
-      const subCategory = subCategoryName?.trim();
+      const category = values[columnMap.category]?.trim();
+      const subCategory = values[columnMap.subCategory]?.trim();
 
       categoryDtos.push({ name: category });
 
@@ -251,9 +280,9 @@ class ProductService {
 
     // CATEGORY HANDLING
     const categoryResult = await this.#categoryService.createMany(categoryDtos);
-
-    const uniqueNames = [...new Set(categoryDtos.map((c) => c.name))];
-    const categories = await this.#categoryService.getAllByNames(uniqueNames);
+    const categories = await this.#categoryService.getAllByNames([
+      ...new Set(categoryDtos.map((c) => c.name)),
+    ]);
 
     const categoryMap = new Map(categories.map((cat) => [cat.name, cat._id]));
 
@@ -266,14 +295,14 @@ class ProductService {
       .filter((dto) => dto.parent);
 
     let subCategoryResult;
+
     if (preparedSubCategories.length) {
       subCategoryResult = await this.#categoryService.createMany(
         preparedSubCategories
       );
 
-      const subNames = preparedSubCategories.map((s) => s.name);
       const savedSubCategories = await this.#categoryService.getAllByNames(
-        subNames
+        preparedSubCategories.map((s) => s.name)
       );
 
       for (const sub of savedSubCategories) {
@@ -304,6 +333,7 @@ class ProductService {
       rows: rows.length,
       insertedProducts: result.upsertedCount,
       insertedCategories: categoryResult.upsertedCount,
+      duplicatedProducts: rows.length - result.upsertedCount,
       insertedSubCategories: subCategoryResult?.upsertedCount || 0,
     });
   }
