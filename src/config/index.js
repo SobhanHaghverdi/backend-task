@@ -28,6 +28,18 @@ function registerConfigs(app) {
       res.send(swaggerConfig);
     });
   }
+
+  app.get("/health", (req, res) => {
+    return res.status(200).json({ status: "OK", uptime: process.uptime() });
+  });
+
+  app.get("/version", (_, res) => {
+    return res.json({
+      app: "Behtech Backend Task",
+      version: "1.0.0",
+      environment: env.NODE_ENV,
+    });
+  });
 }
 
 export default registerConfigs;
