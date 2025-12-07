@@ -6,15 +6,15 @@ let connection;
 async function configureMongoose() {
   const mongooseOptions = {
     family: 4,
-    minPoolSize: 5,
-    maxPoolSize: 30,
     retryWrites: true,
     maxIdleTimeMS: 30000,
     socketTimeoutMS: 45000,
     connectTimeoutMS: 10000,
     waitQueueTimeoutMS: 10000,
     appName: "Behtech Backend Task",
-    readPreference: "primaryPreferred",
+    maxPoolSize: env.MONGODB_MAX_POOL_SIZE,
+    minPoolSize: env.MONGODB_MIN_POOL_SIZE,
+    readPreference: env.MONGODB_READ_PREFERENCE,
   };
 
   try {
