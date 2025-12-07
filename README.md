@@ -197,3 +197,30 @@ pnpm run start
 ```
 
 ---
+
+## 🌐 Live Demo
+
+```md
+Backend API:
+https://backend-task-production-9e5d.up.railway.app/
+
+Swagger:
+https://backend-task-production-9e5d.up.railway.app/docs
+
+Example Endpoint:
+
+GET /docs.json (Access to generated definition by swagger)
+GET /api/products
+POST /api/products/import
+```
+
+---
+
+## 🧪 Test Flow
+
+```md
+1. Download sample Excel (https://github.com/SobhanHaghverdi/backend-task/blob/develop/reports/test-import.xlsx)
+2. Open Swagger `/products/import`
+3. Upload the file
+4. Check `/products`
+```
