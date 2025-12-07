@@ -25,18 +25,17 @@ Core Features:
 
 ## 🧩 Tech Stack
 
-| Layer                | Technology              |
-| -------------------- | ----------------------- |
-| **Runtime**          | Node.js                 |
-| **Framework**        | Express.js              |
-| **ODM**              | Mongoose                |
-| **Database**         | MongoDB                 |
-| **File Parser**      | ExcelJS                 |
-| **Validation**       | VineJS                  |
-| **Containerization** | Docker + Docker Compose |
-| **Logging**          | Winston / Console       |
-| **Docs**             | Swagger                 |
-| **Uploader**         | Multer                  |
+| Layer           | Technology |
+| --------------- | ---------- |
+| **Runtime**     | Node.js    |
+| **Framework**   | Express.js |
+| **ODM**         | Mongoose   |
+| **Database**    | MongoDB    |
+| **File Parser** | ExcelJS    |
+| **Validation**  | VineJS     |
+| **Logging**     | Console    |
+| **Docs**        | Swagger    |
+| **Uploader**    | Multer     |
 
 ## 📦 Installed Packages & Their Usage
 
