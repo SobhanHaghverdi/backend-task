@@ -2,10 +2,12 @@ import os from "os";
 import cluster from "cluster";
 import buildApp from "./app.js";
 import env from "./config/env-config.js";
+import NodeEnv from "./common/constant/node-env-enum.js";
 
 const numCPUs = os.cpus().length;
 
-if (cluster.isPrimary) {
+//* Just to let Railway cloud run smoothly
+if (env.NODE_ENV !== NodeEnv.PRODUCTION && cluster.isPrimary) {
   console.log(`🧠 Master ${process.pid} is running`);
 
   // Fork workers

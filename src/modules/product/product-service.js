@@ -210,6 +210,7 @@ class ProductService {
     };
 
     let columnMap = {};
+    console.log("Excel import process started");
 
     //* Prepare data for inserting
     worksheet.eachRow((row, rowNumber) => {
@@ -324,6 +325,8 @@ class ProductService {
     const result = await this.#model.bulkWrite(preparedProducts, {
       ordered: false,
     });
+
+    console.log("Excel import process ended successfully");
 
     return success({
       rows: rows.length,
