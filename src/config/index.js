@@ -19,14 +19,14 @@ function registerConfigs(app) {
     customSiteTitle: "Behtech Backend Task Swagger UI",
   });
 
-  app.use("/", swaggerUi.serve, swagger);
+  app.use("/docs", swaggerUi.serve, swagger);
 
   app.get("/docs.json", (req, res) => {
     res.setHeader("Content-Type", "application/json");
     res.send(swaggerConfig);
   });
 
-  app.get("/health", (req, res) => {
+  app.get("/", (req, res) => {
     return res.status(200).json({ status: "OK", uptime: process.uptime() });
   });
 }
