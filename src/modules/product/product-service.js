@@ -44,7 +44,7 @@ class ProductService {
     const mainCondition = {};
 
     if (search) {
-      const searchRegex = new RegExp(`${search}`);
+      const searchRegex = new RegExp(`${search.trim()}`);
 
       relationalCondition.$or = [
         { name: { $regex: searchRegex } },
@@ -166,11 +166,7 @@ class ProductService {
             { $sort: { [field]: direction } },
             { $skip: (pageNumber - 1) * pageSize },
             { $limit: pageSize },
-            {
-              $project: {
-                description: 0,
-              },
-            },
+            { $project: { description: 0 } },
           ],
         },
       },
@@ -197,9 +193,8 @@ class ProductService {
     const categoryDtos = [];
     const subCategoryDtos = [];
 
-    let columnMap = {};
-
     const REQUIRED_HEADERS = {
+      price: ["price", "قیمت"],
       amp: ["amp", "amper", "آمپر"],
       name: ["product name", "name", "نام"],
       code: ["code", "product code", "شناسه کالا"],
@@ -207,13 +202,14 @@ class ProductService {
       category: ["category", "category name", "دسته اصلی"],
       subCategory: ["sub category", "sub category name", "زیردسته"],
       warrantyDurationInMonth: ["warranty months", "مدت گارانتی (ماه)"],
-      price: ["price", "قیمت"],
       warrantyStartDate: [
         "warranty_start",
         "warranty start date",
         "شروع گارانتی",
       ],
     };
+
+    let columnMap = {};
 
     //* Prepare data for inserting
     worksheet.eachRow((row, rowNumber) => {

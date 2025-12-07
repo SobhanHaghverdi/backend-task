@@ -1,17 +1,30 @@
 import vine from "@vinejs/vine";
 import mongoose from "mongoose";
+import env from "../../config/env-config.js";
 
 const createProductSchema = () => {
   const productSchema = new mongoose.Schema(
     {
-      amp: { type: Number, required: true },
-      price: { type: Number, required: true },
       isActive: { type: Boolean, required: true },
-      description: { type: String, trim: true },
+      amp: { type: Number, required: true, min: 1 },
+      price: { type: Number, required: true, min: 1 },
       warrantyEndDate: { type: Date, required: true },
       warrantyStartDate: { type: Date, required: true },
-      name: { type: String, required: true, trim: true },
-      code: { type: String, required: true, unique: true, trim: true },
+      description: { type: String, trim: true, maxLength: 800 },
+      code: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        minLength: 1,
+      },
+      name: {
+        type: String,
+        required: true,
+        trim: true,
+        minLength: 3,
+        maxLength: 200,
+      },
       category: {
         index: true,
         required: true,
@@ -25,6 +38,7 @@ const createProductSchema = () => {
   //* Validations
   productSchema.statics.validateCreate = async function (requestBody) {
     const schema = vine.object({
+      size: vine.number().max(env.MULTER_MAX_FILE_SIZE),
       mimetype: vine.enum([
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       ]),
