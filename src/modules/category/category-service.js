@@ -20,7 +20,7 @@ class CategoryService {
   }
 
   async getAllByNames(names) {
-    const fixedNames = names.map((name) => name?.trim());
+    const fixedNames = names?.map((name) => name?.trim());
     return await this.#model.find({ name: { $in: fixedNames } }).lean();
   }
 }

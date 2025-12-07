@@ -11,6 +11,17 @@ async function validateEnv() {
     CORS_ORIGIN: vine.string(),
     MONGODB_URI: vine.string(),
     NODE_ENV: vine.enum(Object.values(NodeEnv)),
+    MULTER_MAX_FILE_SIZE: vine.number().min(1),
+    MONGODB_MIN_POOL_SIZE: vine.number().min(1),
+    MONGODB_MAX_POOL_SIZE: vine.number().min(1),
+    MONGODB_READ_PREFERENCE: vine.enum([
+      "nearest",
+      "primary",
+      "primary",
+      "secondary",
+      "primaryPreferred",
+      "secondaryPreferred",
+    ]),
     PORT: vine
       .number()
       .withoutDecimals()

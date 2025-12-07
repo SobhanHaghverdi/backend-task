@@ -10,12 +10,6 @@ function globalErrorHandler(error, req, res, next) {
   const data = { body: req.body, query: req.query };
   const status = error?.status || 500;
 
-  res.error = {
-    message,
-    callStack: error?.stack,
-    type: status === 422 ? "validation" : "unhandled",
-  };
-
   console.log(error);
 
   return res.status(status).json({

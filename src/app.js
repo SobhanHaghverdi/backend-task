@@ -10,9 +10,11 @@ async function buildApp() {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
+  //* Register configs and routes
   registerConfigs(app);
   app.use("/api", registerRoutes());
 
+  //* Configure mongoose connection
   await configureMongoose();
 
   //* Error handlers

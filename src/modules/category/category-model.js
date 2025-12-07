@@ -10,6 +10,8 @@ const createCategorySchema = () => {
         unique: true,
         type: String,
         required: true,
+        minLength: 3,
+        maxLength: 150,
       },
     },
     { strict: true, versionKey: false, timestamps: false }

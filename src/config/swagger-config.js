@@ -1,3 +1,4 @@
+import path from "path";
 import swaggerJSDoc from "swagger-jsdoc";
 
 const swaggerConfig = swaggerJSDoc({
@@ -10,7 +11,7 @@ const swaggerConfig = swaggerJSDoc({
       contact: { name: "Sobhan Haghverdi", email: "sobhanhv.dev@gmail.com" },
     },
   },
-  apis: [process.cwd() + "/src/modules/**/*-swagger.js"],
+  apis: [path.join(process.cwd(), "src/modules/**/*-swagger.js")],
 });
 
 export default swaggerConfig;
